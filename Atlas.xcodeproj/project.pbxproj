@@ -1668,6 +1668,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"Carthage/Checkouts/**",
+					"Carthage/Build/**",
 					"$(PROJECT_DIR)/Pods/LayerKit",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1729,6 +1730,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"Carthage/Checkouts/**",
+					"Carthage/Build/**",
 					"$(PROJECT_DIR)/Pods/LayerKit",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
