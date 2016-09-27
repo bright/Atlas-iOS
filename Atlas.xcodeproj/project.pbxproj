@@ -247,7 +247,6 @@
 
 /* Begin PBXFileReference section */
 		1886043CF840E83E9A77B78B /* Pods_UnitTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UnitTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		250C5EF21C7656610084EB18 /* LayerKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LayerKit.framework; path = Carthage/Build/iOS/LayerKit.framework; sourceTree = "<group>"; };
 		251C57AB1C5A9E3C00110871 /* ATLBaseCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ATLBaseCollectionViewCell.h; sourceTree = "<group>"; };
 		251C57AC1C5A9E3C00110871 /* ATLBaseCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ATLBaseCollectionViewCell.m; sourceTree = "<group>"; };
 		253C29A51C3C9D7100ED1549 /* Atlas.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Atlas.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -368,6 +367,7 @@
 		959F1869E1FC45A3651F40B6 /* Pods-test-StoryboardTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-test-StoryboardTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-test-StoryboardTests/Pods-test-StoryboardTests.release.xcconfig"; sourceTree = "<group>"; };
 		95A744001D22A9D600BED68D /* LayerKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LayerKit.framework; path = Pods/LayerKit/LayerKit.framework; sourceTree = "<group>"; };
 		98BF90733247F9CE21529791 /* Pods-UnitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UnitTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-UnitTests/Pods-UnitTests.release.xcconfig"; sourceTree = "<group>"; };
+		A34251621D9A307B0036BB48 /* LayerKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LayerKit.framework; path = "Carthage/Checkouts/releases-ios/LayerKit.framework"; sourceTree = "<group>"; };
 		A8E39A93868BE92F637098C5 /* Pods-test-StoryboardTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-test-StoryboardTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-test-StoryboardTests/Pods-test-StoryboardTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B085A18188DCFC913F85665D /* Pods_Programmatic.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Programmatic.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0294DD81A93F33900702856 /* UnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -633,8 +633,8 @@
 		412524007C3A7505AC34F33C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A34251621D9A307B0036BB48 /* LayerKit.framework */,
 				95A744001D22A9D600BED68D /* LayerKit.framework */,
-				250C5EF21C7656610084EB18 /* LayerKit.framework */,
 				5DE31FA9B1906CEA04D0C891 /* Pods.framework */,
 				B085A18188DCFC913F85665D /* Pods_Programmatic.framework */,
 				921B2F42195B3C5F0569C57B /* Pods_Storyboard.framework */,
@@ -1667,7 +1667,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"Carthage/Build/ios/**",
+					"Carthage/Checkouts/**",
 					"$(PROJECT_DIR)/Pods/LayerKit",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -1728,7 +1728,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"Carthage/Build/ios/**",
+					"Carthage/Checkouts/**",
 					"$(PROJECT_DIR)/Pods/LayerKit",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
