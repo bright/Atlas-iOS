@@ -1202,6 +1202,7 @@ static NSInteger const ATLPhotoActionSheet = 1000;
     if (objectChanges.count == 0) {
         [self configurePaginationWindow];
         [self configureMoreMessagesIndicatorVisibility];
+        [self reloadCollectionViewAdjustingForContentHeightChange];
         return;
     }
     
