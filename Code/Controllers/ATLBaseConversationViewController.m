@@ -75,7 +75,7 @@ static CGFloat const ATLMaxScrollDistanceFromBottom = 150;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+
     // Add message input tool bar
     self.messageInputToolbar = [self initializeMessageInputToolbar];
     // Fixes an ios9 bug that causes the background of the input accessory view to be black when being presented on screen.
@@ -84,14 +84,14 @@ static CGFloat const ATLMaxScrollDistanceFromBottom = 150;
     // if the view controller's own inputAccessoryView property is used.
     self.view.inputAccessoryView = self.messageInputToolbar;
     self.messageInputToolbar.containerViewController = self;
-    
+
     // Add typing indicator
     self.typingIndicatorController = [[ATLTypingIndicatorViewController alloc] init];
     [self addChildViewController:self.typingIndicatorController];
     [self.view addSubview:self.typingIndicatorController.view];
     [self.typingIndicatorController didMoveToParentViewController:self];
     [self configureTypingIndicatorLayoutConstraints];
-    
+
     // Add address bar if needed
     if (self.displaysAddressBar) {
         self.addressBarController = [[ATLAddressBarViewController alloc] init];
@@ -140,7 +140,7 @@ static CGFloat const ATLMaxScrollDistanceFromBottom = 150;
     if (!self.presentedViewController && self.navigationController && !self.view.inputAccessoryView.superview) {
         [self.view becomeFirstResponder];
     }
-    
+
     if (self.isFirstAppearance) {
         self.firstAppearance = NO;
         // We use the content size of the actual collection view when calculating the ammount to scroll. Hence, we layout the collection view before scrolling to the bottom.
@@ -152,7 +152,7 @@ static CGFloat const ATLMaxScrollDistanceFromBottom = 150;
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    
+
     self.messageInputToolbar.translucent = NO;
     if (atl_systemVersionLessThan(@"10.0")) {
         // Workaround for view's content flashing onscreen after pop animation concludes on iOS 9.
@@ -168,7 +168,7 @@ static CGFloat const ATLMaxScrollDistanceFromBottom = 150;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-#pragma mark - Public Setters 
+#pragma mark - Public Setters
 
 - (void)setCollectionView:(UICollectionView *)collectionView
 {
@@ -202,16 +202,16 @@ static CGFloat const ATLMaxScrollDistanceFromBottom = 150;
     [self.collectionView setContentOffset:[self bottomOffsetForContentSize:contentSize] animated:animated];
 }
 
-#pragma mark - Content Inset Management  
+#pragma mark - Content Inset Management
 
 - (void)updateTopCollectionViewInset
 {
     [self.addressBarController.view layoutIfNeeded];
-    
+
     UIEdgeInsets contentInset = self.collectionView.contentInset;
     UIEdgeInsets scrollIndicatorInsets = self.collectionView.scrollIndicatorInsets;
     CGRect frame = [self.view convertRect:self.addressBarController.addressBarView.frame fromView:self.addressBarController.addressBarView.superview];
-    
+
     contentInset.top = CGRectGetMaxY(frame);
     scrollIndicatorInsets.top = contentInset.top;
     self.collectionView.contentInset = contentInset;
@@ -221,10 +221,10 @@ static CGFloat const ATLMaxScrollDistanceFromBottom = 150;
 - (void)updateBottomCollectionViewInset
 {
     [self.messageInputToolbar layoutIfNeeded];
-    
+
     UIEdgeInsets insets = self.collectionView.contentInset;
     CGFloat keyboardHeight = MAX(self.keyboardHeight, CGRectGetHeight(self.messageInputToolbar.frame));
-    
+
     insets.bottom = keyboardHeight + self.typingIndicatorInset;
     self.collectionView.scrollIndicatorInsets = insets;
     self.collectionView.contentInset = insets;
@@ -254,16 +254,16 @@ static CGFloat const ATLMaxScrollDistanceFromBottom = 150;
     if (!self.messageInputToolbar.superview) {
        return;
     }
-    
+
     CGRect toolbarFrame = [self.view convertRect:self.messageInputToolbar.frame fromView:self.messageInputToolbar.superview];
     CGFloat keyboardOnscreenHeight = CGRectGetHeight(self.view.frame) - CGRectGetMinY(toolbarFrame);
     if (keyboardOnscreenHeight == self.keyboardHeight) return;
-    
+
     BOOL messagebarDidGrow = keyboardOnscreenHeight > self.keyboardHeight;
     self.keyboardHeight = keyboardOnscreenHeight;
      self.typingIndicatorViewBottomConstraint.constant = -self.collectionView.scrollIndicatorInsets.bottom;
     [self updateBottomCollectionViewInset];
-    
+
     if ([self shouldScrollToBottom] && messagebarDidGrow) {
         [self scrollToBottomAnimated:YES];
     }
@@ -274,7 +274,7 @@ static CGFloat const ATLMaxScrollDistanceFromBottom = 150;
     [self scrollToBottomAnimated:YES];
 }
 
-#pragma mark - Keyboard Management 
+#pragma mark - Keyboard Management
 
 - (void)configureWithKeyboardNotification:(NSNotification *)notification
 {
@@ -283,14 +283,14 @@ static CGFloat const ATLMaxScrollDistanceFromBottom = 150;
     CGRect keyboardEndFrame = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGRect keyboardEndFrameInView = [self.view convertRect:keyboardEndFrame fromView:nil];
     CGRect keyboardEndFrameIntersectingView = CGRectIntersection(self.view.bounds, keyboardEndFrameInView);
-    
+
     CGFloat keyboardHeight = CGRectGetHeight(keyboardEndFrameIntersectingView);
     // Workaround for keyboard height inaccuracy on iOS 8.
     if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_7_1) {
         keyboardHeight -= CGRectGetMinY(self.messageInputToolbar.frame);
     }
     self.keyboardHeight = keyboardHeight;
-    
+
     // Workaround for collection view cell sizes changing/animating when view is first pushed onscreen on iOS 8.
     if (CGRectEqualToRect(keyboardBeginFrameInView, keyboardEndFrameInView)) {
         [UIView performWithoutAnimation:^{
@@ -298,13 +298,13 @@ static CGFloat const ATLMaxScrollDistanceFromBottom = 150;
         }];
         return;
     }
-    
+
     [self.view layoutIfNeeded];
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationDuration:[notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
     [UIView setAnimationCurve:[notification.userInfo[UIKeyboardAnimationCurveUserInfoKey] integerValue]];
     [UIView setAnimationBeginsFromCurrentState:YES];
-    [self updateBottomCollectionViewInset];
+    // [self updateBottomCollectionViewInset]; Removing this line fixes issue of disappearing keyboard when using splitView
     [self.view layoutIfNeeded];
     [UIView commitAnimations];
 }
@@ -364,14 +364,14 @@ static CGFloat const ATLMaxScrollDistanceFromBottom = 150;
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.addressBarController.view attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0]];
 }
 
-#pragma mark - Notification Registration 
+#pragma mark - Notification Registration
 
 - (void)atl_baseRegisterForNotifications
 {
     // Keyboard Notifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
-    
+
     // ATLMessageInputToolbar Notifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textViewTextDidBeginEditing:) name:UITextViewTextDidBeginEditingNotification object:self.messageInputToolbar.textInputView];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(messageInputToolbarDidChangeHeight:) name:ATLMessageInputToolbarDidChangeHeightNotification object:self.messageInputToolbar];
