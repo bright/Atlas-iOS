@@ -20,6 +20,7 @@
 
 #import "ATLBaseConversationViewController.h"
 #import "ATLConversationView.h"
+#import "ATLConversationListViewController.h"
 
 static inline BOOL atl_systemVersionLessThan(NSString * _Nonnull systemVersion) {
     return [[[UIDevice currentDevice] systemVersion] compare:systemVersion options:NSNumericSearch] == NSOrderedAscending;
@@ -235,6 +236,16 @@ static CGFloat const ATLMaxScrollDistanceFromBottom = 150;
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {
+    // This is temporary fix that enables usage of UISplitViewController with conversation list search.
+    // If this is not present then keyboard will not appear.
+    ATLConversationListViewController *list = self.splitViewController.viewControllers.firstObject.childViewControllers.firstObject;
+    if (list != nil) {
+        BOOL isSearchResponder = list.searchController.searchBar.isFirstResponder;
+        if (isSearchResponder) {
+            return;
+        }
+    }
+
     if ([[self navigationController] modalPresentationStyle] == UIModalPresentationPopover) {
         return;
     }
@@ -304,7 +315,7 @@ static CGFloat const ATLMaxScrollDistanceFromBottom = 150;
     [UIView setAnimationDuration:[notification.userInfo[UIKeyboardAnimationDurationUserInfoKey] doubleValue]];
     [UIView setAnimationCurve:[notification.userInfo[UIKeyboardAnimationCurveUserInfoKey] integerValue]];
     [UIView setAnimationBeginsFromCurrentState:YES];
-    // [self updateBottomCollectionViewInset]; Removing this line fixes issue of disappearing keyboard when using splitView
+    [self updateBottomCollectionViewInset];
     [self.view layoutIfNeeded];
     [UIView commitAnimations];
 }
