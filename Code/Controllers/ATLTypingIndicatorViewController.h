@@ -27,6 +27,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface ATLTypingIndicatorViewController : UIViewController
 
+@property (nonatomic) UILabel *label;
+
+@property (nonatomic) CAGradientLayer *backgroundGradientLayer;
+
 /**
  @abstract Updates the typing indicator with an array of participants currently typing. 
  @param participants The participants currently typing in a conversation.

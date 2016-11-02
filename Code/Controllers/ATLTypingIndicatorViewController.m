@@ -23,9 +23,6 @@
 
 @interface ATLTypingIndicatorViewController ()
 
-@property (nonatomic) UILabel *label;
-@property (nonatomic) CAGradientLayer *backgroundGradientLayer;
-
 @end
 
 @implementation ATLTypingIndicatorViewController
