@@ -259,7 +259,8 @@ static CGFloat const ATLChevronIconViewRightPadding = 14.0f;
 #pragma mark - ATLConversationPresenting
 
 - (void)presentConversation:(LYRConversation *)conversation
-{
+{   
+    _presentedConversation = conversation;
     self.dateLabel.text = [self dateLabelForLastMessage:conversation.lastMessage];
     [self updateUnreadMessageIndicatorWithConversation:conversation];
 }

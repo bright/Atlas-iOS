@@ -68,5 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic) UIColor *cellBackgroundColor UI_APPEARANCE_SELECTOR;
 
+@property (nonatomic) LYRConversation *presentedConversation;
+
 @end
 NS_ASSUME_NONNULL_END
