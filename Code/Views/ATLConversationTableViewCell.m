@@ -173,6 +173,10 @@ static CGFloat const ATLChevronIconViewRightPadding = 14.0f;
     _chevronIconView.hidden = isHidden;
 }
 
+- (void)removeUnreadMessageIndicator {
+    _unreadMessageIndicator.hidden = true;
+}
+
 - (void)updateConstraints
 {
     if (self.conversationImageView.isHidden) {
