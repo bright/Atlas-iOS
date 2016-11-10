@@ -169,6 +169,10 @@ static CGFloat const ATLChevronIconViewRightPadding = 14.0f;
     [self configureChevronIconViewConstraints];
 }
 
+- (void)applyArrowHidden:(BOOL)isHidden {
+    _chevronIconView.hidden = isHidden;
+}
+
 - (void)updateConstraints
 {
     if (self.conversationImageView.isHidden) {

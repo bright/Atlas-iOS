@@ -70,5 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) LYRConversation *presentedConversation;
 
+- (void)applyArrowHidden:(BOOL)isHidden;
+
 @end
 NS_ASSUME_NONNULL_END
