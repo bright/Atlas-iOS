@@ -28,7 +28,7 @@ static BOOL ATLIsDateInToday(NSDate *date)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     NSCalendarUnit dateUnits = NSEraCalendarUnit | NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
-#pragma GCC diagnostic pop    
+#pragma GCC diagnostic pop
     NSDateComponents *dateComponents = [[NSCalendar currentCalendar] components:dateUnits fromDate:date];
     NSDateComponents *todayComponents = [[NSCalendar currentCalendar] components:dateUnits fromDate:[NSDate date]];
     return ([dateComponents day] == [todayComponents day] &&
@@ -77,6 +77,7 @@ static NSDateFormatter *ATLShortTimeFormatter()
 static CGFloat const ATLConversationLabelTopPadding = 8.0f;
 static CGFloat const ATLDateLabelRightPadding = 32.0f;
 static CGFloat const ATLLastMessageLabelRightPadding = 16;
+static CGFloat const ATLLastMessageLabelTopPadding = 8.0f;
 static CGFloat const ATLConversationTitleLabelRightPadding = 2.0f;
 static CGFloat const ATLUnreadMessageCountLabelSize = 14.0f;
 static CGFloat const ATLChevronIconViewRightPadding = 14.0f;
@@ -116,21 +117,21 @@ static CGFloat const ATLChevronIconViewRightPadding = 14.0f;
 - (void)lyr_commonInit
 {
     self.backgroundColor = _cellBackgroundColor;
-    
+
     // Initialize Avatar Image
     _conversationImageView = [[ATLAvatarImageView alloc] init];
     _conversationImageView.translatesAutoresizingMaskIntoConstraints = NO;
     _conversationImageView.layer.masksToBounds = YES;
     _conversationImageView.hidden = YES;
     [self.contentView addSubview:_conversationImageView];
-    
+
     // Initialize Sender Image
     _conversationTitleLabel = [[UILabel alloc] init];
     _conversationTitleLabel.translatesAutoresizingMaskIntoConstraints = NO;
     _conversationTitleLabel.font = _conversationTitleLabelFont;
     _conversationTitleLabel.textColor = _conversationTitleLabelColor;
     [self.contentView addSubview:_conversationTitleLabel];
-    
+
     // Initialize Message Label
     _lastMessageLabel = [[UILabel alloc] init];
     _lastMessageLabel.translatesAutoresizingMaskIntoConstraints = NO;
@@ -138,7 +139,7 @@ static CGFloat const ATLChevronIconViewRightPadding = 14.0f;
     _lastMessageLabel.textColor = _lastMessageLabelColor;
     _lastMessageLabel.numberOfLines = 2;
     [self.contentView addSubview:_lastMessageLabel];
-    
+
     // Initialize Date Label
     _dateLabel = [[UILabel alloc] init];
     _dateLabel.translatesAutoresizingMaskIntoConstraints = NO;
@@ -146,21 +147,21 @@ static CGFloat const ATLChevronIconViewRightPadding = 14.0f;
     _dateLabel.font = _dateLabelFont;
     _dateLabel.textColor = _dateLabelColor;
     [self.contentView addSubview:_dateLabel];
-    
+
     _unreadMessageIndicator = [[UIView alloc] init];
     _unreadMessageIndicator.layer.cornerRadius = ATLUnreadMessageCountLabelSize / 2;
     _unreadMessageIndicator.clipsToBounds = YES;
     _unreadMessageIndicator.translatesAutoresizingMaskIntoConstraints = NO;
     _unreadMessageIndicator.backgroundColor = _unreadMessageIndicatorBackgroundColor;
     [self.contentView addSubview:_unreadMessageIndicator];
-    
+
     _chevronIconView = [[UIImageView alloc] init];
     _chevronIconView.translatesAutoresizingMaskIntoConstraints = NO;
-    
+
     NSBundle *resourcesBundle = ATLResourcesBundle();
     _chevronIconView.image = [UIImage imageNamed:@"chevron" inBundle:resourcesBundle compatibleWithTraitCollection:nil];
     [self.contentView addSubview:_chevronIconView];
-    
+
     [self configureConversationImageViewLayoutContraints];
     [self configureconversationTitleLabelLayoutContraints];
     [self configureDateLabelLayoutContstraints];
@@ -267,7 +268,7 @@ static CGFloat const ATLChevronIconViewRightPadding = 14.0f;
 #pragma mark - ATLConversationPresenting
 
 - (void)presentConversation:(LYRConversation *)conversation
-{   
+{
     _presentedConversation = conversation;
     self.dateLabel.text = [self dateLabelForLastMessage:conversation.lastMessage];
     [self updateUnreadMessageIndicatorWithConversation:conversation];
@@ -319,7 +320,7 @@ static CGFloat const ATLChevronIconViewRightPadding = 14.0f;
 {
     if (!lastMessage) return @"";
     if (!lastMessage.sentAt) return @"";
-    
+
     if (ATLIsDateInToday(lastMessage.receivedAt)) {
         return [ATLShortTimeFormatter() stringFromDate:lastMessage.receivedAt];
     } else {
@@ -355,7 +356,7 @@ static CGFloat const ATLChevronIconViewRightPadding = 14.0f;
 {
     [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.lastMessageLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.conversationTitleLabel attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0]];
     [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.lastMessageLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.contentView attribute:NSLayoutAttributeRight multiplier:1.0 constant:-ATLLastMessageLabelRightPadding]];
-    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.lastMessageLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.conversationTitleLabel attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0]];
+    [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.lastMessageLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.conversationTitleLabel attribute:NSLayoutAttributeBottom multiplier:1.0 constant:ATLLastMessageLabelTopPadding]];
     [self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:self.lastMessageLabel attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationLessThanOrEqual toItem:self.contentView attribute:NSLayoutAttributeBottom multiplier:1.0 constant:-8]];
 }
 
