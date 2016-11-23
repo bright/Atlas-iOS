@@ -330,7 +330,15 @@ NSString *const ATLConversationListViewControllerDeletionModeEveryone = @"Everyo
 
 - (void)configureCell:(UITableViewCell<ATLConversationPresenting> *)conversationCell atIndexPath:(NSIndexPath *)indexPath
 {
-    LYRConversation *conversation = [self.queryController numberOfObjectsInSection:indexPath.section] ? [self.queryController objectAtIndexPath:indexPath] : nil;
+    // LYRConversation *conversation = [self.queryController numberOfObjectsInSection:indexPath.section] ? [self.queryController objectAtIndexPath:indexPath] : nil;
+    LYRConversation *conversation = nil;
+    if (self.queryController != nil) {
+        NSUInteger numberOfObjects = [self.queryController numberOfObjectsInSection:indexPath.section];
+        if (numberOfObjects != nil && indexPath.row < numberOfObjects ) {
+            conversation = [self.queryController objectAtIndexPath:indexPath];
+        }
+    }
+    // A hack. Something caused self.queryController to be nil at some points + requests for cells that were not available -> This resulted in crashes
     [conversationCell presentConversation:conversation];
     
     if (self.displaysAvatarItem) {
