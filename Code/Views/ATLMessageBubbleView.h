@@ -26,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 extern CGFloat const ATLMessageBubbleLabelVerticalPadding;
 extern CGFloat const ATLMessageBubbleLabelHorizontalPadding;
 extern CGFloat const ATLMessageBubbleLabelWidthMargin;
+extern CGFloat const ATLMessageBubbleLabelTimestampMargin;
 extern CGFloat const ATLMessageBubbleMapWidth;
 extern CGFloat const ATLMessageBubbleMapHeight;
 extern CGFloat const ATLMessageBubbleDefaultHeight;
@@ -47,6 +48,16 @@ extern NSString *const ATLUserDidTapPhoneNumberNotification;
  images, and location data.
  */
 @interface ATLMessageBubbleView : UIView <UIAppearanceContainer>
+
+/**
+ @abstract Tells the bubble view how to display a timestamp.
+ */
+- (void)updateTimeStampLabelWithAttributedText:(NSAttributedString*)attText;
+
+/**
+ @abstract Tells the bubble view to display a timestamp.
+ */
+- (void)shouldDisplayTimeInMessages:(BOOL)shouldDisplayTimeInMessages;
 
 /**
  @abstract Tells the bubble view to display a given string.
@@ -85,6 +96,11 @@ extern NSString *const ATLUserDidTapPhoneNumberNotification;
  @abstract The view that handles displaying text.
  */
 @property (nonatomic) UILabel *bubbleViewLabel;
+
+/**
+ @abstract The view that handles displaying timestamp.
+ */
+@property (nonatomic) UILabel *bubbleTimestampLabel;
 
 /**
  @abstract The view that handles displaying an image.

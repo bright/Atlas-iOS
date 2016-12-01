@@ -25,6 +25,7 @@
 CGFloat const ATLMessageBubbleLabelVerticalPadding = 8.0f;
 CGFloat const ATLMessageBubbleLabelHorizontalPadding = 13.0f;
 CGFloat const ATLMessageBubbleLabelWidthMargin = 1.0f;
+CGFloat const ATLMessageBubbleLabelTimestampMargin = 40.0f;
 
 CGFloat const ATLMessageBubbleMapWidth = 200.0f;
 CGFloat const ATLMessageBubbleMapHeight = 200.0f;
@@ -55,7 +56,7 @@ typedef NS_ENUM(NSInteger, ATLBubbleViewContentType) {
 @property (nonatomic) ATLProgressView *progressView;
 @property (nonatomic) ATLPlayView *playView;
 @property (nonatomic, weak) ATLMessageComposeTextView *weakTextView;
-
+@property (nonatomic, weak) NSLayoutConstraint *viewLabelRightConstraint;
 @end
 
 @implementation ATLMessageBubbleView
@@ -76,7 +77,7 @@ typedef NS_ENUM(NSInteger, ATLBubbleViewContentType) {
     if (self) {
         _locationShown = kCLLocationCoordinate2DInvalid;
         self.clipsToBounds = YES;
-
+        
         _bubbleViewLabel = [[UILabel alloc] init];
         _bubbleViewLabel.numberOfLines = 0;
         _bubbleViewLabel.userInteractionEnabled = YES;
@@ -97,12 +98,22 @@ typedef NS_ENUM(NSInteger, ATLBubbleViewContentType) {
         _playView.hidden = YES;
         [self addSubview:_playView];
         
+        _bubbleTimestampLabel = [[UILabel alloc] init];
+        _bubbleTimestampLabel.font = [UIFont systemFontOfSize:8 weight:UIFontWeightThin];
+        _bubbleTimestampLabel.textAlignment = NSTextAlignmentRight;
+        _bubbleTimestampLabel.numberOfLines = 0;
+        _bubbleTimestampLabel.userInteractionEnabled = NO;
+        _bubbleTimestampLabel.translatesAutoresizingMaskIntoConstraints = NO;
+        [_bubbleTimestampLabel setContentCompressionResistancePriority:UILayoutPriorityDefaultHigh + 1 forAxis:UILayoutConstraintAxisHorizontal];
+        [self addSubview:_bubbleTimestampLabel];
+        
         _progressView = [[ATLProgressView alloc] initWithFrame:CGRectMake(0, 0, 128.0f, 128.0f)];
         _progressView.translatesAutoresizingMaskIntoConstraints = NO;
         _progressView.alpha = 1.0f;
         [self addSubview:_progressView];
         
         [self configureBubbleViewLabelConstraints];
+        [self configureBubbleTimestampLabelConstraints];
         [self configureBubbleImageViewConstraints];
         [self configureProgressViewConstraints];
         [self configurePlayViewConstraints];
@@ -141,6 +152,19 @@ typedef NS_ENUM(NSInteger, ATLBubbleViewContentType) {
     [self applyImageWidthConstraint:NO];
     self.playView.hidden = YES;
     [self setBubbleViewContentType:ATLBubbleViewContentTypeText];
+}
+
+- (void)updateTimeStampLabelWithAttributedText:(NSAttributedString*)attText {
+    self.bubbleTimestampLabel.attributedText = attText;
+}
+
+- (void)shouldDisplayTimeInMessages:(BOOL)shouldDisplayTimeInMessages {
+    if(shouldDisplayTimeInMessages) {
+        self.viewLabelRightConstraint.constant = -ATLMessageBubbleLabelHorizontalPadding - ATLMessageBubbleLabelTimestampMargin;
+    } else {
+        self.viewLabelRightConstraint.constant = -ATLMessageBubbleLabelHorizontalPadding;
+    }
+    [self setNeedsUpdateConstraints];
 }
 
 - (void)updateWithAttributedText:(NSAttributedString *)text
@@ -465,11 +489,20 @@ typedef NS_ENUM(NSInteger, ATLBubbleViewContentType) {
 
 #pragma mark - Autolayout
 
+- (void)configureBubbleTimestampLabelConstraints
+{
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:_bubbleTimestampLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0 constant:-ATLMessageBubbleLabelVerticalPadding]];
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:_bubbleTimestampLabel attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationLessThanOrEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1.0 constant:-5.0];
+    [self addConstraint:bottomConstraint];
+}
+
 - (void)configureBubbleViewLabelConstraints
 {
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_bubbleViewLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0 constant:ATLMessageBubbleLabelVerticalPadding]];
     [self addConstraint:[NSLayoutConstraint constraintWithItem:_bubbleViewLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0 constant:ATLMessageBubbleLabelHorizontalPadding]];
-    [self addConstraint:[NSLayoutConstraint constraintWithItem:_bubbleViewLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0 constant:-ATLMessageBubbleLabelHorizontalPadding]];
+    self.viewLabelRightConstraint = [NSLayoutConstraint constraintWithItem:_bubbleViewLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0 constant:-ATLMessageBubbleLabelHorizontalPadding];
+    
+    [self addConstraint:self.viewLabelRightConstraint];
     NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:_bubbleViewLabel attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationLessThanOrEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1.0 constant:-ATLMessageBubbleLabelVerticalPadding];
     bottomConstraint.priority = 800;
     [self addConstraint:bottomConstraint];

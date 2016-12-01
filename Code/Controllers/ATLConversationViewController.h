@@ -97,7 +97,7 @@ NS_ASSUME_NONNULL_BEGIN
  current conversation for the controller. If implemented, applications should also register custom `UICollectionViewCell` classes with the controller via
  a call to `registerClass:forMessageCellWithReuseIdentifier:`. They should also implement the optional data source method, `conversationViewController:reuseIdentifierForMessage:`.
  */
-- (NSOrderedSet <LYRMessage*> *)conversationViewController:(ATLConversationViewController *)viewController messagesForMediaAttachments:(NSArray <ATLMediaAttachment*> *)mediaAttachments;
+- (nullable NSOrderedSet <LYRMessage*> *)conversationViewController:(ATLConversationViewController *)viewController messagesForMediaAttachments:(NSArray <ATLMediaAttachment*> *)mediaAttachments;
 
 @end
 
@@ -136,6 +136,26 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSAttributedString *)conversationViewController:(ATLConversationViewController *)conversationViewController attributedStringForDisplayOfRecipientStatus:(NSDictionary *)recipientStatus;
 
 @optional
+
+/**
+ @abstract Asks the data source for an `NSAttributedString` representation of a given date.
+ @param conversationViewController The `ATLConversationViewController` requesting the string.
+ @param date The `NSDate` object to be displayed as a string.
+ @return an `NSAttributedString` representing the given date.
+ @discussion The date string will be displayed in message bubbles at bottom right. The date represents the `sentAt` date of a message object.
+ The string can be customized to appear in whichever format your application requires.
+ */
+- (NSAttributedString *)conversationViewController:(ATLConversationViewController *)conversationViewController attributedStringForDisplayOfTime:(NSDate *)time forOutgoingMessage:(BOOL)isOutgoing;
+
+
+/**
+ @abstract Asks the data source if should display time in messages
+ @return an `BOOL` representing the decision.
+ @discussion The date string will be displayed in message bubbles at bottom right.
+
+ */
+- (BOOL)conversationViewControllerShouldDisplayTimeInMessages:(ATLConversationViewController *)conversationViewController;
+
 
 /**
  @abstract Asks the data source for the collection view cell reuse identifier for a message.

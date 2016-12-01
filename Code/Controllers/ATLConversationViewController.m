@@ -422,6 +422,10 @@ static NSInteger const ATLPhotoActionSheet = 1000;
  */
 - (void)configureCell:(UICollectionViewCell<ATLMessagePresenting> *)cell forMessage:(LYRMessage *)message indexPath:(NSIndexPath *)indexPath
 {
+    // Should display time needs to be before presentMessage
+    BOOL shouldDisplayTimeInMessages = [self shouldDisplayTimeInMessages];
+    [cell shouldDisplayTimeInMessages:shouldDisplayTimeInMessages];
+    
     [cell presentMessage:message];
     BOOL willDisplayAvatarItem = (![message.sender.userID isEqualToString:self.layerClient.authenticatedUser.userID]) ? self.shouldDisplayAvatarItem : (self.shouldDisplayAvatarItem && self.shouldDisplayAvatarItemForAuthenticatedUser);
     [cell shouldDisplayAvatarItem:willDisplayAvatarItem];
@@ -431,6 +435,14 @@ static NSInteger const ATLPhotoActionSheet = 1000;
     } else {
         [cell updateWithSender:nil];
     }
+    
+    if(shouldDisplayTimeInMessages) {
+        BOOL isOutgoing = [message.sender.userID isEqualToString:self.layerClient.authenticatedUser.userID];
+        
+        NSAttributedString *timeString = [self attributedStringForMessageTime:message forOutgoing:isOutgoing];
+        [cell updateTimeStampLabelWithAttributedText:timeString];
+    }
+    
     if (message.isUnread && [[UIApplication sharedApplication] applicationState] == UIApplicationStateActive && self.marksMessagesAsRead) {
         [message markAsRead:nil];
     }
@@ -481,11 +493,17 @@ static NSInteger const ATLPhotoActionSheet = 1000;
     if (!previousMessage.sentAt) return NO;
     
     NSDate *date = message.sentAt ?: [NSDate date];
-    NSTimeInterval interval = [date timeIntervalSinceDate:previousMessage.sentAt];
-    if (abs(interval) > self.dateDisplayTimeInterval) {
-        return YES;
+    NSDate *previousDate = previousMessage.sentAt ?: [NSDate date];
+    
+    if([self shouldDisplayTimeInMessages]) {
+        NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:date];
+        NSDateComponents *previousComponents = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:previousDate];
+        
+        return components.day != previousComponents.day || components.month != previousComponents.month || components.year != previousComponents.year;
+    } else {
+        NSTimeInterval interval = [date timeIntervalSinceDate:previousMessage.sentAt];
+        return abs(interval) > self.dateDisplayTimeInterval;
     }
-    return NO;
 }
 
 - (BOOL)shouldDisplaySenderLabelForSection:(NSUInteger)section
@@ -1119,6 +1137,26 @@ static NSInteger const ATLPhotoActionSheet = 1000;
         @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"ATLConversationViewControllerDataSource must return an attributed string for Date" userInfo:nil];
     }
     return dateString;
+}
+
+- (NSAttributedString *)attributedStringForMessageTime:(LYRMessage *)message forOutgoing:(BOOL)isOutgoing
+{
+    NSAttributedString *dateString;
+    if ([self.dataSource respondsToSelector:@selector(conversationViewController:attributedStringForDisplayOfTime:forOutgoingMessage:)]) {
+        NSDate *date = message.sentAt ?: [NSDate date];
+        dateString = [self.dataSource conversationViewController:self attributedStringForDisplayOfTime:date forOutgoingMessage:isOutgoing];
+        NSAssert([dateString isKindOfClass:[NSAttributedString class]], @"Date string must be an attributed string");
+    } else {
+        @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"ATLConversationViewControllerDataSource must return an attributed string for Date" userInfo:nil];
+    }
+    return dateString;
+}
+
+- (BOOL)shouldDisplayTimeInMessages {
+    if ([self.dataSource respondsToSelector:@selector(conversationViewControllerShouldDisplayTimeInMessages:)]) {
+        return [self.dataSource conversationViewControllerShouldDisplayTimeInMessages:self];
+    }
+    return NO;
 }
 
 - (NSAttributedString *)attributedStringForRecipientStatusOfMessage:(LYRMessage *)message
